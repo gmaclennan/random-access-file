@@ -4,6 +4,7 @@ var os = require('os')
 var path = require('path')
 var fs = require('fs')
 var mkdirp = require('mkdirp')
+var lock = require('fd-lock')
 
 var tmp = path.join(os.tmpdir(), 'random-access-file-' + process.pid + '-' + Date.now())
 var i = 0
@@ -170,9 +171,9 @@ tape('write/read big chunks', function (t) {
   }
 })
 
-tape('destroy', function (t) {
+tape('destroy with lock', function (t) {
   var name = gen()
-  var file = raf(name)
+  var file = raf(name, {lock: lock})
 
   file.write(0, Buffer.from('hi'), function (err) {
     t.error(err, 'no error')
